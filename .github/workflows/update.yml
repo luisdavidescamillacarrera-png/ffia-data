@@ -1,3 +1,19 @@
+name: Update FFIA data
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'  # cada 5 minutos
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: true
+
   - name: Setup Python 3.11
     uses: actions/setup-python@v4
     with:
