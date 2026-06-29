@@ -26,11 +26,11 @@ jobs:
 
       - name: Run updater
         run: |
-          python scripts/update_results.py
+          PYTHONPATH=. python scripts/update_results.py
 
       - name: Run validator
         run: |
-          python scripts/validator.py
+          PYTHONPATH=. python scripts/validator.p
 
       - name: Commit changes if any
         env:
