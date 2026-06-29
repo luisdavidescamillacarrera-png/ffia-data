@@ -2,7 +2,7 @@ name: Update FFIA data
 
 on:
   schedule:
-        - cron: '* * * * *'  # cada  minuto
+    - cron: '*/5 * * * *'  # cada 5 minutos
   workflow_dispatch:
 
 jobs:
@@ -10,12 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v4
         with:
           persist-credentials: true
 
       - name: Setup Python 3.11
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
@@ -24,13 +24,21 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Debug: show control variables
+        run: |
+          echo "ALLOW_REMOTE_FETCH=$ALLOW_REMOTE_FETCH"
+          echo "ENABLE_OPENFOOTBALL=$ENABLE_OPENFOOTBALL"
+          echo "OPENFOOTBALL_URL=${OPENFOOTBALL_URL:-<not-set>}"
+          echo "ENABLE_WIKIDATA=$ENABLE_WIKIDATA"
+          echo "WIKIDATA_TOURNAMENT_QID=${WIKIDATA_TOURNAMENT_QID:-<not-set>}"
+
       - name: Run updater
         run: |
-          PYTHONPATH=. python scripts/update_results.py
+          python scripts/update_results.py
 
       - name: Run validator
         run: |
-          PYTHONPATH=. python scripts/validator.py
+          python scripts/validator.py
 
       - name: Commit changes if any
         env:
