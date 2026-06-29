@@ -30,7 +30,7 @@ jobs:
 
       - name: Run validator
         run: |
-          PYTHONPATH=. python scripts/validator.p
+          PYTHONPATH=. python scripts/validator.py
 
       - name: Commit changes if any
         env:
