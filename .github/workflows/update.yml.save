@@ -1,8 +1,8 @@
 name: Update FFIA data
 
-on:
+on
   schedule:
-        - cron: '*/5 * * * *'  # cada  minuto
+        - cron: '* * * * *'  # cada  minuto
   workflow_dispatch:
 
 jobs:
@@ -50,5 +50,4 @@ jobs:
       - name: Deploy JSON to GitHub Pages (gh-pages)
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./data
+          github_token:
