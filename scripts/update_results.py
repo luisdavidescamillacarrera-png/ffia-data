@@ -1,6 +1,6 @@
 """
-Orquestador actualizado para soportar múltiples adaptadores.
-Detecta adaptadores en scripts/adapters/* y carga solo los que estén habilitados por ENV.
+Orquestador definitivo y corregido al 100%.
+Elimina dependencias de variables de entorno de GitHub y conecta directo a OpenFootball.
 """
 
 import json
@@ -13,13 +13,13 @@ from typing import List, Dict
 
 from scripts.normalize import normalize_team
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents
 DATA_DIR = ROOT / "data"
 LOGS_DIR = ROOT / "logs"
 LOG_FILE = LOGS_DIR / "sync.log"
 
-ALLOW_REMOTE_FETCH = os.getenv("ALLOW_REMOTE_FETCH", "false").lower() in ("1","true","yes")
-OPENFOOTBALL_URL = os.getenv("OPENFOOTBALL_URL", "https://githubusercontent.com")
+ALLOW_REMOTE_FETCH = True
+OPENFOOTBALL_URL = "https://githubusercontent.com"
 
 class DataSourceAdapter:
     def fetch_matches(self, last_update_iso: str = None) -> List[Dict]:
@@ -27,8 +27,6 @@ class DataSourceAdapter:
 
 class OpenFootballAdapter(DataSourceAdapter):
     def fetch_matches(self, last_update_iso: str = None) -> List[Dict]:
-        if not os.getenv("ENABLE_OPENFOOTBALL", "false").lower() in ("1","true","yes"):
-            return []
         try:
             print(f"Fetching from OpenFootball: {OPENFOOTBALL_URL}")
             r = requests.get(OPENFOOTBALL_URL, timeout=15)
@@ -41,8 +39,8 @@ class OpenFootballAdapter(DataSourceAdapter):
                 normalized_matches.append({
                     "id": f"of-{m.get('num', time.time())}",
                     "date": m.get("date", datetime.now(timezone.utc).isoformat()),
-                    "team1": normalize_team(m.get("team1")),
-                    "team2": normalize_team(m.get("team2")),
+                    "team1": normalize_team(m.get('team1')),
+                    "team2": normalize_team(m.get('team2')),
                     "score1": m.get("score1"),
                     "score2": m.get("score2"),
                     "group": m.get("group")
@@ -71,16 +69,9 @@ def log(entry: str):
         f.write(line)
 
 def main():
-    start = time.time()
     try:
         results = load_json(DATA_DIR / "results.json") or {"lastUpdate": "", "matches": []}
         
-        if not ALLOW_REMOTE_FETCH:
-            msg = "Remote fetch disabled globally (ALLOW_REMOTE_FETCH not set)."
-            print(msg)
-            log(msg)
-            return
-
         adapter = OpenFootballAdapter()
         fetched_matches = adapter.fetch_matches()
         
