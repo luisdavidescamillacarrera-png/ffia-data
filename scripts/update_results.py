@@ -1,11 +1,10 @@
 """
-Orquestador definitivo corregido al 100% sin errores de Path.
-Conecta directo a OpenFootball sin usar variables de entorno de GitHub.
+Orquestador definitivo de demolición.
+Cero lectura de variables externas. Dirección inmutable grabada a fuego.
 """
 
 import json
 import time
-import os
 import requests
 from datetime import datetime, timezone
 from pathlib import Path
@@ -18,7 +17,6 @@ DATA_DIR = ROOT / "data"
 LOGS_DIR = ROOT / "logs"
 LOG_FILE = LOGS_DIR / "sync.log"
 
-ALLOW_REMOTE_FETCH = True
 OPENFOOTBALL_URL = "https://githubusercontent.com"
 
 class DataSourceAdapter:
