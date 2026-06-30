@@ -26,23 +26,25 @@ jobs:
 
       - name: Run updater
         env:
-          ALLOW_REMOTE_FETCH: ${{ vars.ALLOW_REMOTE_FETCH }}
-          ENABLE_OPENFOOTBALL: ${{ vars.ENABLE_OPENFOOTBALL }}
-          ENABLE_WIKIDATA: ${{ vars.ENABLE_WIKIDATA }}
-          OPENFOOTBALL_URL: ${{ vars.OPENFOOTBALL_URL }}
-          WIKIDATA_TOURNAMENT_QID: ${{ vars.WIKIDATA_TOURNAMENT_QID }}
+          ALLOW_REMOTE_FETCH: "true"
+          ENABLE_OPENFOOTBALL: "true"
+          OPENFOOTBALL_URL: "https://githubusercontent.com"
+          ENABLE_WIKIDATA: "true"
+          WIKIDATA_TOURNAMENT_QID: "Q5020214"
         run: |
-          PYTHONPATH=. python scripts/update_results.py
+          export PYTHONPATH=.
+          python scripts/update_results.py
 
       - name: Run validator
         env:
-          ALLOW_REMOTE_FETCH: ${{ vars.ALLOW_REMOTE_FETCH }}
-          ENABLE_OPENFOOTBALL: ${{ vars.ENABLE_OPENFOOTBALL }}
-          ENABLE_WIKIDATA: ${{ vars.ENABLE_WIKIDATA }}
-          OPENFOOTBALL_URL: ${{ vars.OPENFOOTBALL_URL }}
-          WIKIDATA_TOURNAMENT_QID: ${{ vars.WIKIDATA_TOURNAMENT_QID }}
+          ALLOW_REMOTE_FETCH: "true"
+          ENABLE_OPENFOOTBALL: "true"
+          OPENFOOTBALL_URL: "https://githubusercontent.com"
+          ENABLE_WIKIDATA: "true"
+          WIKIDATA_TOURNAMENT_QID: "Q5020214"
         run: |
-          PYTHONPATH=. python scripts/validator.py
+          export PYTHONPATH=.
+          python scripts/validator.py
 
       - name: Commit changes if any
         env:
