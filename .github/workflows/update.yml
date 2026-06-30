@@ -27,8 +27,51 @@ jobs:
       - name: Run updater
         run: |
           export PYTHONPATH=.
-          # Tiro de gracia: Reemplazar cualquier rastro de la URL mocha en todo el proyecto
-          find . -type f -name "*.py" -exec sed -i 's|https://githubusercontent.com|https://githubusercontent.com|g' {} +
+          
+          # Inyección forzada directa del script principal limpio
+          cat << 'EOF' > scripts/update_results.py
+          import json
+          import time
+          import requests
+          from datetime import datetime, timezone
+          from pathlib import Path
+          
+          ROOT = Path(__file__).resolve().parent.parent
+          DATA_DIR = ROOT / "data"
+          
+          def main():
+              url = "https://githubusercontent.com"
+              print(f"Fetching directly from: {url}")
+              try:
+                  r = requests.get(url, timeout=15)
+                  r.raise_for_status()
+                  data = r.json()
+                  
+                  matches = data.get("matches", [])
+                  normalized = []
+                  for m in matches:
+                      normalized.append({
+                          "id": f"of-{m.get('num', time.time())}",
+                          "date": m.get("date"),
+                          "team1": m.get("team1", {}).get("name", m.get("team1", "Unknown")),
+                          "team2": m.get("team2", {}).get("name", m.get("team2", "Unknown")),
+                          "score1": m.get("score1"),
+                          "score2": m.get("score2"),
+                          "group": m.get("group")
+                      })
+                  
+                  results = {"lastUpdate": datetime.now(timezone.utc).isoformat(), "matches": normalized}
+                  DATA_DIR.mkdir(parents=True, exist_ok=True)
+                  with open(DATA_DIR / "results.json", "w", encoding="utf-8") as f:
+                      json.dump(results, f, indent=2, ensure_ascii=False)
+                  print(f"Successfully saved {len(normalized)} matches!")
+              except Exception as e:
+                  print(f"Fatal connection error: {e}")
+          
+          if __name__ == "__main__":
+              main()
+          EOF
+          
           python scripts/update_results.py
 
       - name: Run validator
@@ -39,7 +82,7 @@ jobs:
       - name: Commit changes if any
         env:
           GIT_AUTHOR_NAME: "github-actions[bot]"
-          GIT_AUTHOR_EMAIL: "github-actions[bot]@://github.com"
+          GIT_AUTHOR_EMAIL: "github-actions[bot]@users.noreply.github.com"
         run: |
           git config user.name "$GIT_AUTHOR_NAME"
           git config user.email "$GIT_AUTHOR_EMAIL"
