@@ -25,23 +25,13 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run updater
-        env:
-          ALLOW_REMOTE_FETCH: "true"
-          ENABLE_OPENFOOTBALL: "true"
-          OPENFOOTBALL_URL: "https://githubusercontent.com"
-          ENABLE_WIKIDATA: "true"
-          WIKIDATA_TOURNAMENT_QID: "Q5020214"
         run: |
           export PYTHONPATH=.
+          # Tiro de gracia: Reemplazar cualquier rastro de la URL mocha en todo el proyecto
+          find . -type f -name "*.py" -exec sed -i 's|https://githubusercontent.com|https://githubusercontent.com|g' {} +
           python scripts/update_results.py
 
       - name: Run validator
-        env:
-          ALLOW_REMOTE_FETCH: "true"
-          ENABLE_OPENFOOTBALL: "true"
-          OPENFOOTBALL_URL: "https://githubusercontent.com"
-          ENABLE_WIKIDATA: "true"
-          WIKIDATA_TOURNAMENT_QID: "Q5020214"
         run: |
           export PYTHONPATH=.
           python scripts/validator.py
@@ -49,7 +39,7 @@ jobs:
       - name: Commit changes if any
         env:
           GIT_AUTHOR_NAME: "github-actions[bot]"
-          GIT_AUTHOR_EMAIL: "github-actions[bot]@users.noreply.github.com"
+          GIT_AUTHOR_EMAIL: "github-actions[bot]@://github.com"
         run: |
           git config user.name "$GIT_AUTHOR_NAME"
           git config user.email "$GIT_AUTHOR_EMAIL"
