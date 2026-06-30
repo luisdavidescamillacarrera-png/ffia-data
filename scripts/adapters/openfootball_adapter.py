@@ -4,6 +4,7 @@ import time
 from datetime import datetime, timezone
 from scripts.normalize import normalize_team
 
+# URL DEFINITIVA BLINDADA - NO MODIFICAR
 OPENFOOTBALL_URL = "https://githubusercontent.com"
 
 class OpenFootballAdapter:
