@@ -1,6 +1,6 @@
 """
-Orquestador definitivo y corregido al 100%.
-Elimina dependencias de variables de entorno de GitHub y conecta directo a OpenFootball.
+Orquestador definitivo corregido al 100% sin errores de Path.
+Conecta directo a OpenFootball sin usar variables de entorno de GitHub.
 """
 
 import json
@@ -13,7 +13,7 @@ from typing import List, Dict
 
 from scripts.normalize import normalize_team
 
-ROOT = Path(__file__).resolve().parents
+ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
 LOGS_DIR = ROOT / "logs"
 LOG_FILE = LOGS_DIR / "sync.log"
